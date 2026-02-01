@@ -8,14 +8,14 @@ using Selu383.SP26.Api.Models;
 namespace Selu383.SP26.Api.Controllers;
 
 [ApiController]
-[Route("api/location")]
-public class LocationController : ControllerBase
+[Route("api/locations")]
+public class LocationsController : ControllerBase
 {
 
-    private readonly ILogger<LocationController> _logger;
+    private readonly ILogger<LocationsController> _logger;
     private readonly DataContext _context;
 
-    public LocationController(ILogger<LocationController> logger, DataContext context)
+    public LocationsController(ILogger<LocationsController> logger, DataContext context)
     {
         _logger = logger;
         _context = context;
@@ -55,21 +55,38 @@ public class LocationController : ControllerBase
 
     [HttpPost(Name = "CreateLocation")]
     public async Task<ActionResult<LocationDto>> CreateLocation([FromBody] Location location)
+
+
     {
-        if (location == null || string.IsNullOrEmpty(location.Name) || string.IsNullOrEmpty(location.Address))
-        {
-            return BadRequest("Invalid location data.");
-        }
+        if (location == null)
+            return BadRequest();
+
+        if (string.IsNullOrWhiteSpace(location.Name))
+            return BadRequest();
+
+        if (location.Name.Length > 120)
+            return BadRequest();
+
+        if (string.IsNullOrWhiteSpace(location.Address))
+            return BadRequest();
+
+        if (location.TableCount < 1)
+            return BadRequest();
+
         _context.Location.Add(location);
         await _context.SaveChangesAsync();
-        var locationDto = new LocationDto
+
+        var dto = new LocationDto
         {
             Id = location.Id,
             Name = location.Name,
             Address = location.Address,
             TableCount = location.TableCount
         };
-        return CreatedAtRoute("GetLocation", new { id = locationDto.Id }, locationDto);
+
+        return CreatedAtRoute("GetLocation", new { id = dto.Id }, dto);
+
+
     }
 
     [HttpPut("{id}", Name = "UpdateLocation")]
