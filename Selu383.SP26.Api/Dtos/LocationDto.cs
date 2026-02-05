@@ -8,7 +8,7 @@ public class LocationDto
     public int Id { get; set; }
 
     [Required]
-    [StringLength(100)]
+    [StringLength(120)]
     public string Name { get; set; } = string.Empty;
 
     [Required]

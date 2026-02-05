@@ -30,23 +30,5 @@ public class DataContext : DbContext
             l.Property(e => e.TableCount)
                 .IsRequired();
         });
-
-        // Seed data required for unit tests
-        modelBuilder.Entity<Location>().HasData(
-            new Location
-            {
-                Id = 1,
-                Name = "Test Location 1",
-                Address = "123 Main St",
-                TableCount = 10
-            },
-            new Location
-            {
-                Id = 2,
-                Name = "Test Location 2",
-                Address = "456 Oak Ave",
-                TableCount = 8
-            }
-        );
     }
 }

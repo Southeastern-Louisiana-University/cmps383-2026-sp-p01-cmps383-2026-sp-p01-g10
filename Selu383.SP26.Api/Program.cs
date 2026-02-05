@@ -1,5 +1,7 @@
-using Selu383.SP26.Api.Data;
+using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore;
+using Selu383.SP26.Api.Data;
+using Selu383.SP26.Api.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -29,7 +31,35 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-    db.Database.EnsureCreated(); // <-- THIS FIXES YOUR TESTS
+    db.Database.Migrate(); // <-- THIS FIXES YOUR TESTS
+    if (!db.Location.Any())
+    {
+        db.Location.AddRange([
+               new Location
+            {
+
+                Name = "Test Location 1",
+                Address = "123 Main St",
+                TableCount = 10
+            },
+            new Location
+            {
+                Name = "Test Location 2",
+                Address = "456 Oak Ave",
+                TableCount = 8
+            },
+             new Location
+            {
+                Name = "Test Location 2",
+                Address = "456 Oak Ave",
+                TableCount = 8
+            }]
+
+
+     );
+
+        db.SaveChanges();
+    }
 }
 
 // Configure the HTTP request pipeline.

@@ -55,8 +55,6 @@ public class LocationsController : ControllerBase
 
     [HttpPost(Name = "CreateLocation")]
     public async Task<ActionResult<LocationDto>> CreateLocation([FromBody] Location location)
-
-
     {
         if (location == null)
             return BadRequest();
@@ -92,7 +90,22 @@ public class LocationsController : ControllerBase
     [HttpPut("{id}", Name = "UpdateLocation")]
     public async Task<ActionResult<LocationDto>> UpdateLocation(int id, [FromBody] Location location)
     {
-        var existingLocation = await _context.Location.FindAsync(id);
+        if (location == null || id != location.Id)
+        {
+            return BadRequest();
+        }
+         if (string.IsNullOrWhiteSpace(location.Name))
+            return BadRequest();
+        if (location.Name.Length > 120)
+            return BadRequest();
+        if (string.IsNullOrWhiteSpace(location.Address))
+            return BadRequest();
+        if (location.TableCount < 1)
+            return BadRequest();
+
+
+
+            var existingLocation = await _context.Location.FindAsync(id);
         if (existingLocation == null)
         {
             return NotFound();
@@ -121,6 +134,6 @@ public class LocationsController : ControllerBase
         }
         _context.Location.Remove(location);
         await _context.SaveChangesAsync();
-        return NoContent();
+        return Ok();
     }
 }

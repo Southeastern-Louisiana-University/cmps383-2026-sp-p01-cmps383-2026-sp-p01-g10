@@ -8,7 +8,7 @@ public class Location
     public int Id { get; set; }
 
     [Required]
-    [MaxLength(100)]
+    [MaxLength(120)]
     public string Name { get; set; } = string.Empty;
     
     [Required]
